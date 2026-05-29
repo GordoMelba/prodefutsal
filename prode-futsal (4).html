@@ -1,0 +1,1981 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prode Futsal AFA</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161a22;
+    --surface2: #1e2330;
+    --border: #2a3040;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --gold: #f5c518;
+    --text: #e8eaf0;
+    --text2: #8892a4;
+    --green: #22c55e;
+    --red: #ef4444;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; }
+
+  /* AUTH */
+  #auth-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 30% 20%, #00d4ff18 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, #ff6b3518 0%, transparent 50%),
+                var(--bg);
+    padding: 20px;
+  }
+  .auth-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+  }
+  .auth-logo {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .auth-logo .logo-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+  .auth-logo .logo-title span { color: var(--accent); }
+  .auth-logo .logo-sub {
+    font-size: 12px;
+    color: var(--text2);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .auth-tabs {
+    display: flex;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 28px;
+  }
+  .auth-tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 8px;
+    color: var(--text2);
+    transition: all .2s;
+  }
+  .auth-tab.active { background: var(--accent); color: #000; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 6px;
+  }
+  .form-group input, .form-group select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: border-color .2s;
+    appearance: none;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+  .form-group select option { background: var(--surface2); }
+  .club-select-wrapper { position: relative; }
+  .club-select-wrapper::after {
+    content: '▾';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text2);
+    pointer-events: none;
+  }
+  .btn-primary {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger {
+    background: transparent;
+    color: var(--red);
+    border: 1px solid var(--red);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .auth-error {
+    background: #ef444420;
+    border: 1px solid var(--red);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--red);
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  /* MAIN APP */
+  #app { display: none; flex-direction: column; min-height: 100vh; }
+  
+  /* TOP NAV */
+  .topnav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    object-fit: cover;
+    cursor: pointer;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--accent);
+    overflow: hidden;
+  }
+  .nav-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+  /* BOTTOM NAV */
+  .bottomnav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    cursor: pointer;
+    color: var(--text2);
+    transition: color .2s;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    gap: 4px;
+  }
+  .nav-item.active { color: var(--accent); }
+  .nav-item svg { width: 22px; height: 22px; }
+  .nav-item span { font-size: 9px; }
+
+  /* MAIN CONTENT */
+  .main-content {
+    flex: 1;
+    padding: 20px 16px 90px;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    margin-bottom: 20px;
+  }
+  .section-title span { color: var(--accent); }
+
+  /* SCREENS */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* PERFIL */
+  .profile-header {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .profile-avatar-wrap { position: relative; cursor: pointer; }
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    color: var(--accent);
+    overflow: hidden;
+  }
+  .profile-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .profile-avatar-edit {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .profile-info { flex: 1; }
+  .profile-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+  }
+  .profile-club {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .profile-club img { width: 24px; height: 24px; object-fit: contain; }
+  .profile-club span { font-size: 14px; color: var(--text2); }
+  .profile-pts {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+    margin-top: 8px;
+  }
+  .profile-pts-label { font-size: 11px; color: var(--text2); letter-spacing: 1px; text-transform: uppercase; }
+  .profile-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-card .num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--accent);
+  }
+  .stat-card .lbl { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+
+  /* PRODE */
+  .fecha-header {
+    background: linear-gradient(135deg, var(--surface), var(--surface2));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .fecha-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text2);
+  }
+  .fecha-titulo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+  }
+  .cierre-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: .5px;
+  }
+  .cierre-badge.abierto { background: #22c55e20; color: var(--green); border: 1px solid #22c55e50; }
+  .cierre-badge.cerrado { background: #ef444420; color: var(--red); border: 1px solid #ef444450; }
+  .cierre-badge.bloqueado { background: #f5c51820; color: var(--gold); border: 1px solid #f5c51850; }
+  .partido-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: border-color .2s;
+  }
+  .partido-card.bloqueado { opacity: .55; }
+  .partido-card.con-pronostico { border-color: #00d4ff40; }
+  .partido-fecha-hora {
+    font-size: 11px;
+    color: var(--text2);
+    letter-spacing: .5px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .partido-equipos {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .equipo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+  }
+  .equipo img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+  }
+  .equipo-nombre {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .vs-sep {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text2);
+    letter-spacing: 1px;
+  }
+  .pronostico-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .score-input {
+    width: 52px;
+    height: 52px;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s;
+    -moz-appearance: textfield;
+  }
+  .score-input::-webkit-outer-spin-button,
+  .score-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .score-input:focus { border-color: var(--accent); }
+  .score-input:disabled { opacity: .4; cursor: not-allowed; }
+  .score-sep {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text2);
+  }
+  .partido-bloq-msg {
+    font-size: 12px;
+    color: var(--gold);
+    text-align: center;
+    margin-top: 8px;
+    font-style: italic;
+  }
+  .pronostico-resultado {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .pts-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: .5px;
+  }
+  .pts-badge.exacto { background: var(--gold); color: #000; }
+  .pts-badge.ganador { background: var(--green); color: #fff; }
+  .pts-badge.fallado { background: #ef444430; color: var(--red); border: 1px solid #ef444450; }
+  .btn-save-prode {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .2s;
+    margin-top: 8px;
+  }
+  .btn-save-prode:hover { opacity: .9; }
+  .btn-save-prode:disabled { opacity: .4; cursor: not-allowed; }
+  .save-status {
+    text-align: center;
+    font-size: 13px;
+    color: var(--green);
+    margin-top: 8px;
+    display: none;
+  }
+
+  /* TORNEOS */
+  .torneo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: border-color .2s, transform .15s;
+  }
+  .torneo-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .torneo-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .torneo-nombre {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+  }
+  .torneo-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .torneo-badge.club { background: #f5c51820; color: var(--gold); border: 1px solid #f5c51850; }
+  .torneo-badge.privado { background: #00d4ff20; color: var(--accent); border: 1px solid #00d4ff50; }
+  .torneo-meta { font-size: 13px; color: var(--text2); }
+  .btn-crear-torneo {
+    width: 100%;
+    background: transparent;
+    color: var(--accent);
+    border: 2px dashed var(--accent);
+    border-radius: var(--radius);
+    padding: 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .2s;
+    margin-bottom: 20px;
+  }
+  .btn-crear-torneo:hover { background: #00d4ff15; }
+
+  /* TABLA POSICIONES */
+  .tabla-posiciones {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .tabla-header {
+    display: grid;
+    grid-template-columns: 36px 1fr 60px 60px 60px;
+    padding: 10px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text2);
+  }
+  .tabla-row {
+    display: grid;
+    grid-template-columns: 36px 1fr 60px 60px 60px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    transition: background .15s;
+  }
+  .tabla-row:last-child { border-bottom: none; }
+  .tabla-row:hover { background: var(--surface2); }
+  .tabla-row.yo { background: #00d4ff0d; border-left: 3px solid var(--accent); }
+  .tabla-pos {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text2);
+  }
+  .tabla-pos.top1 { color: var(--gold); }
+  .tabla-pos.top2 { color: #c0c0c0; }
+  .tabla-pos.top3 { color: #cd7f32; }
+  .tabla-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tabla-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--accent);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .tabla-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .tabla-username { font-weight: 600; font-size: 14px; }
+  .tabla-club-icon { width: 18px; height: 18px; object-fit: contain; }
+  .tabla-pts {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--gold);
+    text-align: center;
+  }
+  .tabla-num {
+    font-size: 13px;
+    color: var(--text2);
+    text-align: center;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: #000000cc;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 20px;
+  }
+  .modal-close {
+    float: right;
+    background: none;
+    border: none;
+    color: var(--text2);
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .invite-link-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 13px;
+    color: var(--accent);
+    word-break: break-all;
+    margin-bottom: 12px;
+    font-family: monospace;
+  }
+
+  /* ADMIN */
+  .admin-banner {
+    background: linear-gradient(135deg, #ff6b3520, #ff6b3510);
+    border: 1px solid #ff6b3550;
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--accent2);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .resultado-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .resultado-equipos {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .resultado-scores {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .resultado-score-in {
+    width: 44px;
+    height: 44px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .resultado-score-in::-webkit-outer-spin-button,
+  .resultado-score-in::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .resultado-score-in:focus { border-color: var(--accent2); }
+
+  /* LOADING */
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: var(--text2);
+    font-size: 14px;
+    gap: 10px;
+  }
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TOAST */
+  #toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transition: all .3s;
+    z-index: 300;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast.success { border-color: var(--green); color: var(--green); }
+  #toast.error { border-color: var(--red); color: var(--red); }
+
+  /* DETALLE TORNEO */
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text2);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 20px;
+    width: fit-content;
+  }
+  .back-btn:hover { color: var(--accent); }
+
+  /* PERFIL EDIT */
+  .edit-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .edit-section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 16px;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text2);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 15px; }
+
+  /* MOSAICO ESCUDOS */
+  .torneo-club-bg {
+    position: relative;
+    overflow: hidden;
+  }
+  .torneo-club-bg::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 1;
+  }
+  .escudos-mosaic {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 0;
+    padding: 0;
+  }
+  .escudos-mosaic img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    padding: 8px;
+    opacity: 0.08;
+    filter: grayscale(10%);
+    transition: none;
+  }
+  .escudos-mosaic img.destacado {
+    opacity: 1 !important;
+    filter: none !important;
+  }
+  .torneo-detalle-content-wrap {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* PUNTUACION BADGE EN TORNEO */
+  .puntuacion-recuadro {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 400px) {
+    .equipo-nombre { font-size: 12px; }
+    .score-input { width: 46px; height: 46px; font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="logo-title">PRODE<span>FUTSAL</span></div>
+      <div class="logo-sub">AFA · Primera A</div>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchTab('login')">Ingresar</div>
+      <div class="auth-tab" onclick="switchTab('register')">Registrarse</div>
+    </div>
+    <div class="auth-error" id="auth-error"></div>
+
+    <!-- LOGIN -->
+    <div id="tab-login">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="tu@email.com">
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="login-pass" placeholder="••••••••">
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Entrar</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="tab-register" style="display:none">
+      <div class="form-group">
+        <label>Nombre de usuario</label>
+        <input type="text" id="reg-username" placeholder="tu apodo">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="tu@email.com">
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="reg-pass" placeholder="mínimo 6 caracteres">
+      </div>
+      <div class="form-group">
+        <label>Club favorito</label>
+        <div class="club-select-wrapper">
+          <select id="reg-club">
+            <option value="">Elegí tu club...</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="doRegister()">Crear cuenta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <nav class="topnav">
+    <div class="nav-logo">PRODE<span>FUTSAL</span></div>
+    <div class="nav-user">
+      <div class="nav-avatar" id="nav-avatar-btn" onclick="goToScreen('perfil')">
+        <span id="nav-avatar-initial">?</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="main-content">
+    <!-- PRODE SCREEN -->
+    <div class="screen active" id="screen-prode">
+      <div class="section-title">Próxima <span>Fecha</span></div>
+      <div id="prode-content"><div class="loading"><div class="spinner"></div> Cargando...</div></div>
+    </div>
+
+    <!-- TORNEOS SCREEN -->
+    <div class="screen" id="screen-torneos">
+      <div class="section-title">Mis <span>Torneos</span></div>
+      <div id="torneos-content"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- PERFIL SCREEN -->
+    <div class="screen" id="screen-perfil">
+      <div class="section-title">Mi <span>Perfil</span></div>
+      <div id="perfil-content"></div>
+    </div>
+
+    <!-- ADMIN SCREEN -->
+    <div class="screen" id="screen-admin">
+      <div class="section-title">Panel <span>Admin</span></div>
+      <div id="admin-content"></div>
+    </div>
+
+    <!-- TORNEO DETALLE -->
+    <div class="screen" id="screen-torneo-detalle">
+      <div id="torneo-detalle-content"></div>
+    </div>
+  </div>
+
+  <nav class="bottomnav">
+    <div class="nav-item active" onclick="goToScreen('prode')" id="nav-prode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
+      <span>Prode</span>
+    </div>
+    <div class="nav-item" onclick="goToScreen('torneos')" id="nav-torneos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4H4v5a8 8 0 0 0 8 8 8 8 0 0 0 8-8V4h-3"/></svg>
+      <span>Torneos</span>
+    </div>
+    <div class="nav-item" onclick="goToScreen('perfil')" id="nav-perfil">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span>Perfil</span>
+    </div>
+    <div class="nav-item" onclick="goToScreen('admin')" id="nav-admin" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <span>Admin</span>
+    </div>
+  </nav>
+</div>
+
+
+<!-- MODAL JOIN TORNEO -->
+<div class="modal-overlay" id="modal-join-confirm">
+  <div class="modal" style="text-align:center">
+    <div style="font-size:48px;margin-bottom:16px">🏆</div>
+    <div class="modal-title" style="text-align:center">¡Fuiste invitado!</div>
+    <p style="color:var(--text2);font-size:15px;margin-bottom:8px">Torneo:</p>
+    <div id="join-torneo-nombre" style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;margin-bottom:8px"></div>
+    <div id="join-torneo-miembros" style="color:var(--text2);font-size:13px;margin-bottom:24px"></div>
+    <button class="btn-primary" onclick="confirmarJoin()" style="margin-bottom:10px">🙌 Participar</button>
+    <br>
+    <button class="btn-secondary" onclick="rechazarJoin()" style="width:100%">Ahora no</button>
+  </div>
+</div>
+
+<!-- MODAL CREAR TORNEO -->
+<div class="modal-overlay" id="modal-torneo">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-torneo')">✕</button>
+    <div class="modal-title">Crear Torneo</div>
+    <div class="form-group">
+      <label>Nombre del torneo</label>
+      <input type="text" id="nuevo-torneo-nombre" placeholder="ej: Los cracks del barrio">
+    </div>
+    <div id="modal-torneo-error" class="auth-error"></div>
+    <button class="btn-primary" onclick="crearTorneo()">Crear</button>
+  </div>
+</div>
+
+<!-- MODAL INVITACION -->
+<div class="modal-overlay" id="modal-invite">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-invite')">✕</button>
+    <div class="modal-title">Compartir Torneo</div>
+    <p style="color:var(--text2);font-size:14px;margin-bottom:16px">Compartí este link con tus amigos para que se unan:</p>
+    <div class="invite-link-box" id="invite-link-text"></div>
+    <button class="btn-primary" onclick="copyInviteLink()">Copiar Link</button>
+  </div>
+</div>
+
+
+<!-- MODAL COMPLETAR PERFIL -->
+<div class="modal-overlay" id="modal-completar-perfil">
+  <div class="modal">
+    <div class="modal-title">Completá tu perfil</div>
+    <p style="color:var(--text2);font-size:14px;margin-bottom:20px">Tu cuenta fue creada pero faltaron algunos datos. Completalos para continuar.</p>
+    <div class="form-group">
+      <label>Nombre de usuario</label>
+      <input type="text" id="completar-username" placeholder="tu apodo">
+    </div>
+    <div class="form-group">
+      <label>Club favorito</label>
+      <div class="club-select-wrapper">
+        <select id="completar-club">
+          <option value="">Elegí tu club...</option>
+        </select>
+      </div>
+    </div>
+    <div id="completar-error" class="auth-error"></div>
+    <button class="btn-primary" onclick="completarPerfil()">Guardar y continuar</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, addDoc, serverTimestamp, orderBy, onSnapshot, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCPJfADANc-LiIxvNH_Gfo7HEpxB0DEiz4",
+  authDomain: "prode-futsal.firebaseapp.com",
+  projectId: "prode-futsal",
+  storageBucket: "prode-futsal.firebasestorage.app",
+  messagingSenderId: "261997093276",
+  appId: "1:261997093276:web:941b3d31e7bf77e2f46859"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+// ─── CONSTANTES ───────────────────────────────────────────────────────────────
+
+
+// Detectar invitación en URL al cargar
+const _urlParams = new URLSearchParams(window.location.search);
+const _pendingJoin = _urlParams.get('join');
+if (_pendingJoin) {
+  sessionStorage.setItem('pendingJoin', _pendingJoin);
+  // Mostrar banner de invitación
+  (async () => {
+    try {
+      const { getFirestore: _gfs, doc: _d, getDoc: _gd } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    } catch(e) {}
+    document.getElementById('invite-landing').style.display = 'block';
+    document.getElementById('invite-torneo-nombre').textContent = 'Cargando torneo...';
+    // Leer nombre del torneo
+    setTimeout(async () => {
+      try {
+        const tSnap = await getDoc(doc(db, 'torneos', _pendingJoin));
+        if (tSnap.exists()) {
+          document.getElementById('invite-torneo-nombre').textContent = tSnap.data().nombre;
+        }
+      } catch(e) {}
+    }, 1500);
+  })();
+}
+
+const ADMIN_EMAIL = "rodrigovinocur@gmail.com";
+
+const CLUBES = [
+  { id: "america", nombre: "América del Sud", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20A%2Fthumbnail%2Famerica.png?alt=media&token=87674903-61f6-4dab-97a7-de8656fe1053" },
+  { id: "agosto", nombre: "17 de Agosto", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20A%2Fthumbnail%2Fagosto.png?alt=media&token=7b38bd78-de44-401c-b3ea-6a20ddee2c7b" },
+  { id: "racing", nombre: "Racing Club", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20A%2Fthumbnail%2Fracing-min-min.png?alt=media&token=c3c9425b-fcba-4771-859f-6479a58abc92" },
+  { id: "sanlorenzo", nombre: "San Lorenzo", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20A%2Fthumbnail%2Fsanlorenzo-min-min.png?alt=media&token=1d9f7db3-3e4b-470c-b102-9606158b958c" },
+  { id: "barracas", nombre: "Barracas Central", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20A%2Fthumbnail%2Fbarracas-min-min.png?alt=media&token=64e03973-6c3c-44fe-99bf-28a802eee713" },
+  { id: "boca", nombre: "Boca Juniors", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20A%2Fthumbnail%2Fboca-min-min.png?alt=media&token=f29f8734-c725-464b-8221-ac922ecf87b6" },
+  { id: "independiente", nombre: "Independiente", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20A%2Fthumbnail%2Findependiente-min-min.png?alt=media&token=7065be76-3309-4ce7-8885-cb01cc36d0eb" },
+  { id: "newbery", nombre: "J. Newbery", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20A%2Fnewbery.svg?alt=media&token=77897b79-a526-48bd-9797-b72d67ded145" },
+  { id: "estudiantil", nombre: "Est. Porteño", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20C%2Fcaep.svg?alt=media&token=bba3527c-df97-455a-8107-f6417848acc7" },
+  { id: "river", nombre: "River Plate", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20B%2Fthumbnail%2Friver-min-min.png?alt=media&token=d8311b67-fe2f-4932-8fe3-2e9591d81979" },
+  { id: "estrella", nombre: "Estrella de Boedo", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20B%2Festrellaboedo.svg?alt=media&token=03d10dce-e1aa-4f70-8dc9-ee6e4de6989c" },
+  { id: "ferro", nombre: "Ferro Carril Oeste", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20A%2Fthumbnail%2Fferro-min.png?alt=media&token=63aa9876-a565-4710-89fe-ce8099e9d838" },
+  { id: "newells", nombre: "Newell's Old Boys", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20B%2Fthumbnail%2Fnewells-min-min.png?alt=media&token=0c7f73f3-c380-4239-b0e8-da307237d2f0" },
+  { id: "hebraica", nombre: "Soc. Hebraica Arg.", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20A%2Fthumbnail%2Fsha.png?alt=media&token=e899b8cc-a03f-4930-a620-3267b818bd0d" },
+  { id: "glorias", nombre: "Glorias de Tigre", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20B%2Fglorias.svg?alt=media&token=d71b5ca2-53e1-4c9d-a716-2edb05a56355" },
+  { id: "kimberley", nombre: "Kimberley A.C.", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20A%2Fthumbnail%2Fkac.png?alt=media&token=8849c27e-5b36-4894-acb2-ff18b74b5a7c" },
+  { id: "camioneros", nombre: "Camioneros", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20B%2Fthumbnail%2Fcamioneros-min.png?alt=media&token=402733dc-ff19-4dbc-bbd8-0258a1c4408e" },
+  { id: "pinocho", nombre: "Pinocho", logo: "https://firebasestorage.googleapis.com/v0/b/parenlapelotafutsal-4a110.appspot.com/o/Clubes%20Primera%20A%2Fthumbnail%2Fpinocho-min.png?alt=media&token=6eae4c29-922a-41bc-a0ba-31b6605b0d81" },
+];
+
+// Fixture fecha 13
+const FECHA_ACTUAL = {
+  numero: 13,
+  partidos: [
+    { id: "f13_p1", local: "independiente", visitante: "newells", fecha: "2026-05-30", hora: "14:30", bloqueado: false },
+    { id: "f13_p2", local: "estrella", visitante: "estudiantil", fecha: "2026-05-30", hora: "19:00", bloqueado: false },
+    { id: "f13_p3", local: "river", visitante: "kimberley", fecha: "2026-05-30", hora: "19:30", bloqueado: false },
+    { id: "f13_p4", local: "racing", visitante: "hebraica", fecha: "2026-05-30", hora: "19:30", bloqueado: false },
+    { id: "f13_p5", local: "pinocho", visitante: "camioneros", fecha: "2026-05-31", hora: "19:00", bloqueado: false },
+    { id: "f13_p6", local: "sanlorenzo", visitante: "glorias", fecha: "2026-05-31", hora: "20:30", bloqueado: false },
+    { id: "f13_p7", local: "ferro", visitante: "newbery", fecha: "2026-05-31", hora: "19:30", bloqueado: false },
+    { id: "f13_p8", local: "agosto", visitante: "america", fecha: "2026-05-31", hora: "19:30", bloqueado: false },
+    { id: "f13_p9", local: "boca", visitante: "barracas", fecha: "2026-06-14", hora: "21:00", bloqueado: true, bloqueadoMsg: "Este partido se jugará el 14/06 y se agregará al prode de esa semana" },
+  ]
+};
+
+// ─── ESTADO ───────────────────────────────────────────────────────────────────
+
+let currentUser = null;
+let currentUserData = null;
+let currentScreen = 'prode';
+let currentTorneoId = null;
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+
+function getClub(id) { return CLUBES.find(c => c.id === id) || { nombre: id, logo: '' }; }
+
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  setTimeout(() => t.className = '', 2500);
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function hideError(id) { document.getElementById(id).style.display = 'none'; }
+
+window.openModal = function openModal(id) { document.getElementById(id).classList.add('open'); }
+window.closeModal = (id) => document.getElementById(id).classList.remove('open');
+
+function primerPartidoTimestamp() {
+  const primerPartido = FECHA_ACTUAL.partidos.filter(p => !p.bloqueado)
+    .sort((a,b) => new Date(`${a.fecha}T${a.hora}`) - new Date(`${b.fecha}T${b.hora}`))[0];
+  return new Date(`${primerPartido.fecha}T${primerPartido.hora}:00`);
+}
+
+function isProdeAbierto() {
+  const cierre = new Date(primerPartidoTimestamp().getTime() - 2*60*60*1000);
+  return new Date() < cierre;
+}
+
+function formatFechaHora(fecha, hora) {
+  const d = new Date(`${fecha}T${hora}:00`);
+  return d.toLocaleDateString('es-AR', { weekday:'short', day:'numeric', month:'short' }) + ' · ' + hora + 'hs';
+}
+
+function calcPuntos(pronostico, resultado) {
+  if (!resultado || resultado.local === '' || resultado.visitante === '') return null;
+  const pLocal = parseInt(pronostico.local);
+  const pVisit = parseInt(pronostico.visitante);
+  const rLocal = parseInt(resultado.local);
+  const rVisit = parseInt(resultado.visitante);
+  if (pLocal === rLocal && pVisit === rVisit) return { pts: 6, tipo: 'exacto' };
+  const pGana = pLocal > pVisit ? 'L' : pLocal < pVisit ? 'V' : 'E';
+  const rGana = rLocal > rVisit ? 'L' : rLocal < rVisit ? 'V' : 'E';
+  if (pGana === rGana) return { pts: 3, tipo: 'ganador' };
+  return { pts: 0, tipo: 'fallado' };
+}
+
+// ─── AUTH ──────────────────────────────────────────────────────────────────────
+
+window.switchTab = function(tab) {
+  document.getElementById('tab-login').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('tab-register').style.display = tab === 'register' ? '' : 'none';
+  document.querySelectorAll('.auth-tab').forEach((el, i) => {
+    el.classList.toggle('active', (i===0 && tab==='login') || (i===1 && tab==='register'));
+  });
+  hideError('auth-error');
+};
+
+window.doLogin = async function() {
+  hideError('auth-error');
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if (!email || !pass) return showError('auth-error', 'Completá todos los campos');
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) {
+    const msgs = { 'auth/user-not-found':'Usuario no encontrado', 'auth/wrong-password':'Contraseña incorrecta', 'auth/invalid-credential':'Email o contraseña incorrectos' };
+    showError('auth-error', msgs[e.code] || 'Error al iniciar sesión');
+  }
+};
+
+window.doRegister = async function() {
+  hideError('auth-error');
+  const username = document.getElementById('reg-username').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const club = document.getElementById('reg-club').value;
+  if (!username || !email || !pass || !club) return showError('auth-error', 'Completá todos los campos');
+  if (pass.length < 6) return showError('auth-error', 'La contraseña debe tener al menos 6 caracteres');
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await updateProfile(cred.user, { displayName: username });
+    await setDoc(doc(db, 'usuarios', cred.user.uid), {
+      username, email, club, photoURL: '', puntosTotal: 0,
+      exactos: 0, ganadores: 0, fallados: 0,
+      createdAt: serverTimestamp()
+    });
+    // Crear torneo de club automáticamente si no existe
+    const clubData = getClub(club);
+    const torneoClubRef = doc(db, 'torneos', `club_${club}`);
+    const torneoClubSnap = await getDoc(torneoClubRef);
+    if (!torneoClubSnap.exists()) {
+      await setDoc(torneoClubRef, {
+        nombre: `Hinchas de ${clubData.nombre}`,
+        tipo: 'club', clubId: club,
+        miembros: [cred.user.uid],
+        createdAt: serverTimestamp()
+      });
+    } else {
+      await updateDoc(torneoClubRef, { miembros: arrayUnion(cred.user.uid) });
+    }
+  } catch(e) {
+    const msgs = { 'auth/email-already-in-use':'Ese email ya está registrado' };
+    showError('auth-error', msgs[e.code] || 'Error al crear cuenta');
+  }
+};
+
+// ─── NAVEGACION ───────────────────────────────────────────────────────────────
+
+window.goToScreen = function(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const screenEl = document.getElementById(`screen-${screen}`);
+  if (!screenEl) return;
+  screenEl.classList.add('active');
+  const navEl = document.getElementById(`nav-${screen}`);
+  if (navEl) navEl.classList.add('active');
+  currentScreen = screen;
+  if (screen === 'prode') renderProde();
+  if (screen === 'torneos') renderTorneos();
+  if (screen === 'perfil') renderPerfil();
+  if (screen === 'admin') renderAdmin();
+};
+
+// ─── ONAUTH ───────────────────────────────────────────────────────────────────
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    const snap = await getDoc(doc(db, 'usuarios', user.uid));
+    if (snap.exists()) {
+      currentUserData = snap.data();
+    } else {
+      // Usuario en Auth pero sin datos en Firestore
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      // Poblar select del modal
+      const selC = document.getElementById('completar-club');
+      if (selC.options.length <= 1) {
+        CLUBES.sort((a,b)=>a.nombre.localeCompare(b.nombre)).forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.id; opt.textContent = c.nombre;
+          selC.appendChild(opt);
+        });
+      }
+      document.getElementById('completar-username').value = user.displayName || '';
+      openModal('modal-completar-perfil');
+      return;
+    }
+    // Verificar invitación pendiente (de URL o sessionStorage)
+    const pendingJoinId = sessionStorage.getItem('pendingJoin');
+    if (pendingJoinId) {
+      sessionStorage.removeItem('pendingJoin');
+      window.history.replaceState({}, '', window.location.pathname);
+      // Mostrar pantalla de confirmación antes de unirse
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      await showJoinConfirm(pendingJoinId);
+      return;
+    }
+    // Mostrar admin si corresponde
+    if (user.email === ADMIN_EMAIL || ADMIN_EMAIL === '') {
+      document.getElementById('nav-admin').style.display = 'flex';
+    }
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    finishLogin();
+  } else {
+    currentUser = null;
+    currentUserData = null;
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+  }
+});
+
+// Poblar select de clubes
+const selClub = document.getElementById('reg-club');
+CLUBES.sort((a,b)=>a.nombre.localeCompare(b.nombre)).forEach(c => {
+  const opt = document.createElement('option');
+  opt.value = c.id;
+  opt.textContent = c.nombre;
+  selClub.appendChild(opt);
+});
+
+// ─── PRODE ────────────────────────────────────────────────────────────────────
+
+async function renderProde() {
+  const el = document.getElementById('prode-content');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div> Cargando...</div>';
+  
+  const abierto = isProdeAbierto();
+  const cierre = new Date(primerPartidoTimestamp().getTime() - 2*60*60*1000);
+  
+  // Cargar pronósticos existentes
+  let pronosticos = {};
+  const proSnap = await getDoc(doc(db, 'pronosticos', `${currentUser.uid}_fecha${FECHA_ACTUAL.numero}`));
+  if (proSnap.exists()) pronosticos = proSnap.data().partidos || {};
+
+  // Cargar resultados
+  let resultados = {};
+  const resSnap = await getDoc(doc(db, 'resultados', `fecha${FECHA_ACTUAL.numero}`));
+  if (resSnap.exists()) resultados = resSnap.data().partidos || {};
+
+  let html = `
+    <div class="fecha-header">
+      <div>
+        <div class="fecha-num">Fecha ${FECHA_ACTUAL.numero}</div>
+        <div class="fecha-titulo">Futsal AFA · Primera A</div>
+      </div>
+      <div class="cierre-badge ${abierto?'abierto':'cerrado'}">
+        ${abierto ? '🟢 Abierto' : '🔴 Cerrado'}
+      </div>
+    </div>
+  `;
+
+  // Recuadro de puntuación
+  html += `<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2);flex-shrink:0">Puntuación:</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <span style="background:var(--gold);color:#000;border-radius:20px;padding:3px 12px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px">⭐ Resultado exacto = 6 pts</span>
+      <span style="background:#22c55e;color:#fff;border-radius:20px;padding:3px 12px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px">✓ Ganador / Empate = 3 pts</span>
+      <span style="background:#ef444430;color:var(--red);border:1px solid #ef444450;border-radius:20px;padding:3px 12px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px">✗ Fallado = 0 pts</span>
+    </div>
+  </div>`;
+
+  if (abierto) {
+    html += `<p style="font-size:13px;color:var(--text2);margin-bottom:16px;text-align:center">Cierre: ${cierre.toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short'})} a las ${cierre.getHours()}:${String(cierre.getMinutes()).padStart(2,'0')}hs</p>`;
+  }
+
+  FECHA_ACTUAL.partidos.forEach(p => {
+    const local = getClub(p.local);
+    const visitante = getClub(p.visitante);
+    const pro = pronosticos[p.id] || {};
+    const res = resultados[p.id];
+    const bloq = p.bloqueado || !abierto;
+    const tienePro = pro.local !== undefined;
+    let ptsBadge = '';
+    if (res && tienePro) {
+      const calc = calcPuntos(pro, res);
+      if (calc) {
+        const labels = { exacto:'⭐ +6 pts', ganador:'✓ +3 pts', fallado:'✗ 0 pts' };
+        ptsBadge = `<div class="pronostico-resultado"><span class="pts-badge ${calc.tipo}">${labels[calc.tipo]}</span></div>`;
+      }
+    }
+
+    html += `<div class="partido-card ${p.bloqueado?'bloqueado':''} ${tienePro&&!p.bloqueado?'con-pronostico':''}">
+      <div class="partido-fecha-hora">${formatFechaHora(p.fecha, p.hora)}</div>
+      <div class="partido-equipos">
+        <div class="equipo">
+          <img src="${local.logo}" alt="${local.nombre}" onerror="this.style.display='none'">
+          <div class="equipo-nombre">${local.nombre}</div>
+        </div>
+        <div class="vs-sep">VS</div>
+        <div class="equipo">
+          <img src="${visitante.logo}" alt="${visitante.nombre}" onerror="this.style.display='none'">
+          <div class="equipo-nombre">${visitante.nombre}</div>
+        </div>
+      </div>`;
+
+    if (p.bloqueado) {
+      html += `<p class="partido-bloq-msg">🔒 ${p.bloqueadoMsg}</p>`;
+    } else if (!abierto && res) {
+      // Mostrar resultado real
+      html += `<div class="pronostico-inputs">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;color:var(--gold)">${res.local} - ${res.visitante}</div>
+      </div>
+      ${ptsBadge}`;
+      if (tienePro) {
+        html += `<div style="text-align:center;font-size:12px;color:var(--text2);margin-top:6px">Tu pronóstico: ${pro.local} - ${pro.visitante}</div>`;
+      }
+    } else if (!abierto) {
+      html += `<div class="pronostico-inputs">
+        <div style="font-size:13px;color:var(--text2)">Esperando resultado...</div>
+      </div>
+      ${tienePro ? `<div style="text-align:center;font-size:12px;color:var(--text2);margin-top:6px">Tu pronóstico: ${pro.local} - ${pro.visitante}</div>` : ''}`;
+    } else {
+      html += `<div class="pronostico-inputs">
+        <input type="number" class="score-input" id="score_${p.id}_local" min="0" max="99" value="${pro.local ?? ''}" placeholder="0">
+        <span class="score-sep">-</span>
+        <input type="number" class="score-input" id="score_${p.id}_visit" min="0" max="99" value="${pro.visitante ?? ''}" placeholder="0">
+      </div>`;
+    }
+
+    html += `</div>`;
+  });
+
+  if (abierto) {
+    html += `<button class="btn-save-prode" onclick="guardarPronostico()">Guardar Pronóstico</button>
+    <div class="save-status" id="save-status">✓ Pronóstico guardado</div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+window.guardarPronostico = async function() {
+  if (!isProdeAbierto()) return showToast('El prode ya está cerrado', 'error');
+  const partidos = {};
+  let completo = true;
+  for (const p of FECHA_ACTUAL.partidos.filter(p => !p.bloqueado)) {
+    const lEl = document.getElementById(`score_${p.id}_local`);
+    const vEl = document.getElementById(`score_${p.id}_visit`);
+    if (!lEl || !vEl) continue;
+    const l = lEl.value;
+    const v = vEl.value;
+    if (l === '' || v === '') { completo = false; break; }
+    partidos[p.id] = { local: parseInt(l), visitante: parseInt(v) };
+  }
+  if (!completo) return showToast('Completá todos los pronósticos', 'error');
+  try {
+    await setDoc(doc(db, 'pronosticos', `${currentUser.uid}_fecha${FECHA_ACTUAL.numero}`), {
+      uid: currentUser.uid,
+      fecha: FECHA_ACTUAL.numero,
+      partidos,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    const status = document.getElementById('save-status');
+    if (status) { status.style.display = 'block'; setTimeout(() => status.style.display = 'none', 3000); }
+    showToast('✓ Pronóstico guardado');
+  } catch(e) {
+    showToast('Error al guardar', 'error');
+  }
+};
+
+// ─── TORNEOS ──────────────────────────────────────────────────────────────────
+
+async function renderTorneos() {
+  const el = document.getElementById('torneos-content');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+  let html = `<button class="btn-crear-torneo" onclick="openModal('modal-torneo')">+ Crear nuevo torneo</button>`;
+
+  // Torneos donde participa
+  const q = query(collection(db, 'torneos'), where('miembros', 'array-contains', currentUser.uid));
+  const snap = await getDocs(q);
+
+  if (snap.empty) {
+    html += `<div class="empty-state"><div class="icon">🏆</div><p>Todavía no participás en ningún torneo.<br>Creá uno e invitá a tus amigos.</p></div>`;
+  } else {
+    html += `<div class="section-title" style="font-size:18px;margin-bottom:12px">Mis torneos</div>`;
+    snap.forEach(d => {
+      const t = d.data();
+      html += `<div class="torneo-card" onclick="verTorneo('${d.id}')">
+        <div class="torneo-card-header">
+          <div class="torneo-nombre">${t.nombre}</div>
+          <span class="torneo-badge ${t.tipo==='club'?'club':'privado'}">${t.tipo==='club'?'🛡️ Club':'🔒 Privado'}</span>
+        </div>
+        <div class="torneo-meta">${t.miembros?.length || 0} participante${(t.miembros?.length||0)!==1?'s':''}</div>
+      </div>`;
+    });
+  }
+
+  el.innerHTML = html;
+}
+
+window.verTorneo = async function(torneoId) {
+  currentTorneoId = torneoId;
+  goToScreen('torneo-detalle');
+  renderTorneoDetalle(torneoId);
+};
+
+async function renderTorneoDetalle(torneoId) {
+  const el = document.getElementById('torneo-detalle-content');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+  const torneoSnap = await getDoc(doc(db, 'torneos', torneoId));
+  if (!torneoSnap.exists()) return;
+  const torneo = torneoSnap.data();
+
+  // Cargar datos de usuarios
+  const miembros = torneo.miembros || [];
+  const usersData = [];
+  for (const uid of miembros) {
+    const uSnap = await getDoc(doc(db, 'usuarios', uid));
+    if (uSnap.exists()) usersData.push({ uid, ...uSnap.data() });
+  }
+  usersData.sort((a,b) => (b.puntosTotal||0) - (a.puntosTotal||0));
+
+  const inviteUrl = `${window.location.origin}${window.location.pathname}?join=${torneoId}`;
+  const esCreador = torneo.creadorId === currentUser.uid;
+  const esClub = torneo.tipo === 'club';
+
+  // Mosaico de escudos para torneos de club
+  let mosaico = '';
+  if (esClub) {
+    const clubDelTorneo = torneo.clubId || '';
+    // Generar suficientes escudos para llenar la pantalla (18 clubes x 10 repeticiones)
+    let escudosArr = [];
+    for (let r = 0; r < 12; r++) {
+      CLUBES.forEach(c => {
+        const esEsteClub = c.id === clubDelTorneo;
+        escudosArr.push(`<img src="${c.logo}" alt="${c.nombre}" class="${esEsteClub ? 'destacado' : ''}" onerror="this.style.display='none'">`);
+      });
+    }
+    mosaico = `<div class="escudos-mosaic">${escudosArr.join('')}</div>`;
+  }
+
+  let html = `
+    ${mosaico}
+    <div class="torneo-detalle-content-wrap">
+    <div class="back-btn" onclick="goToScreen('torneos')">
+      ← Volver a torneos
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px">
+      <div>
+        <div class="section-title" style="margin-bottom:4px">${torneo.nombre}</div>
+        <span class="torneo-badge ${esClub?'club':'privado'}">${esClub?'🛡️ Club':'🔒 Privado'}</span>
+      </div>
+      ${!esClub ? `<button class="btn-secondary" onclick="showInvite('${inviteUrl}')">Invitar</button>` : ''}
+    </div>
+    <div class="puntuacion-recuadro">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2);flex-shrink:0">Puntos:</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:var(--gold);color:#000;border-radius:20px;padding:2px 10px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px">⭐ Exacto = 6</span>
+        <span style="background:#22c55e;color:#fff;border-radius:20px;padding:2px 10px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px">✓ Ganador/Empate = 3</span>
+        <span style="background:#ef444430;color:var(--red);border:1px solid #ef444450;border-radius:20px;padding:2px 10px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px">✗ Fallado = 0</span>
+      </div>
+    </div>
+    <div class="tabla-posiciones">
+      <div class="tabla-header">
+        <div>#</div>
+        <div>Jugador</div>
+        <div style="text-align:center">Pts</div>
+        <div style="text-align:center">✓</div>
+        <div style="text-align:center">⭐</div>
+      </div>`;
+
+  usersData.forEach((u, i) => {
+    const club = getClub(u.club);
+    const posClass = i===0?'top1':i===1?'top2':i===2?'top3':'';
+    const esYo = u.uid === currentUser.uid;
+    const avatarContent = u.photoURL
+      ? `<img src="${u.photoURL}">`
+      : (u.username||'?')[0].toUpperCase();
+    html += `<div class="tabla-row ${esYo?'yo':''}">
+      <div class="tabla-pos ${posClass}">${i+1}</div>
+      <div class="tabla-user">
+        <div class="tabla-avatar">${avatarContent}</div>
+        <div>
+          <div class="tabla-username">${u.username || 'Usuario'}</div>
+          <img src="${club.logo}" class="tabla-club-icon" alt="${club.nombre}" onerror="this.style.display='none'">
+        </div>
+      </div>
+      <div class="tabla-pts">${u.puntosTotal || 0}</div>
+      <div class="tabla-num">${u.ganadores || 0}</div>
+      <div class="tabla-num">${u.exactos || 0}</div>
+    </div>`;
+  });
+
+  html += `</div></div></div>`;
+  el.innerHTML = html;
+}
+
+window.showInvite = function(url) {
+  document.getElementById('invite-link-text').textContent = url;
+  openModal('modal-invite');
+};
+
+window.copyInviteLink = function() {
+  const url = document.getElementById('invite-link-text').textContent;
+  navigator.clipboard.writeText(url).then(() => showToast('Link copiado'));
+};
+
+window.crearTorneo = async function() {
+  const nombre = document.getElementById('nuevo-torneo-nombre').value.trim();
+  const errEl = document.getElementById('modal-torneo-error');
+  errEl.style.display = 'none';
+  if (!nombre) { errEl.textContent = 'Poné un nombre'; errEl.style.display = 'block'; return; }
+  try {
+    const ref = await addDoc(collection(db, 'torneos'), {
+      nombre,
+      tipo: 'privado',
+      creadorId: currentUser.uid,
+      miembros: [currentUser.uid],
+      createdAt: serverTimestamp()
+    });
+    closeModal('modal-torneo');
+    document.getElementById('nuevo-torneo-nombre').value = '';
+    showToast('Torneo creado');
+    renderTorneos();
+  } catch(e) {
+    errEl.textContent = 'Error al crear el torneo'; errEl.style.display = 'block';
+  }
+};
+
+
+async function showJoinConfirm(torneoId) {
+  const tSnap = await getDoc(doc(db, 'torneos', torneoId));
+  if (!tSnap.exists()) {
+    showToast('Torneo no encontrado', 'error');
+    finishLogin();
+    return;
+  }
+  const torneo = tSnap.data();
+  // Ya es miembro?
+  if ((torneo.miembros || []).includes(currentUser.uid)) {
+    finishLogin();
+    goToScreen('torneos');
+    return;
+  }
+  // Mostrar modal de confirmación
+  document.getElementById('join-torneo-nombre').textContent = torneo.nombre;
+  document.getElementById('join-torneo-miembros').textContent = `${torneo.miembros?.length || 0} participante${(torneo.miembros?.length||0)!==1?'s':''}`;
+  window._pendingJoinId = torneoId;
+  openModal('modal-join-confirm');
+}
+
+function finishLogin() {
+  const initial = (currentUserData?.username || currentUser.displayName || currentUser.email)[0].toUpperCase();
+  document.getElementById('nav-avatar-initial').textContent = initial;
+  if (currentUserData?.photoURL) {
+    document.getElementById('nav-avatar-initial').innerHTML = `<img src="${currentUserData.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  }
+  if (currentUser.email === ADMIN_EMAIL) document.getElementById('nav-admin').style.display = 'flex';
+  goToScreen('prode');
+}
+
+window.confirmarJoin = async function() {
+  const torneoId = window._pendingJoinId;
+  closeModal('modal-join-confirm');
+  await joinTorneo(torneoId);
+  finishLogin();
+  goToScreen('torneos');
+};
+
+window.rechazarJoin = function() {
+  closeModal('modal-join-confirm');
+  finishLogin();
+};
+
+async function joinTorneo(torneoId) {
+  try {
+    const torneoRef = doc(db, 'torneos', torneoId);
+    const snap = await getDoc(torneoRef);
+    if (!snap.exists()) return showToast('Torneo no encontrado', 'error');
+    await updateDoc(torneoRef, { miembros: arrayUnion(currentUser.uid) });
+    showToast(`Te uniste a "${snap.data().nombre}"`);
+  } catch(e) {
+    showToast('Error al unirte al torneo', 'error');
+  }
+}
+
+// ─── PERFIL ───────────────────────────────────────────────────────────────────
+
+async function renderPerfil() {
+  const el = document.getElementById('perfil-content');
+  if (!currentUserData) return;
+  const club = getClub(currentUserData.club);
+  const initial = (currentUserData.username || '?')[0].toUpperCase();
+  const avatarContent = currentUserData.photoURL
+    ? `<img src="${currentUserData.photoURL}">`
+    : initial;
+
+  el.innerHTML = `
+    <div class="profile-header">
+      <div class="profile-avatar-wrap">
+        <label for="avatar-upload" style="cursor:pointer">
+          <div class="profile-avatar">${avatarContent}</div>
+          <div class="profile-avatar-edit">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </div>
+        </label>
+        <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="uploadAvatar(event)">
+      </div>
+      <div class="profile-info">
+        <div class="profile-name">${currentUserData.username}</div>
+        <div class="profile-club">
+          <img src="${club.logo}" alt="${club.nombre}" onerror="this.style.display='none'">
+          <span>${club.nombre}</span>
+        </div>
+        <div class="profile-pts">${currentUserData.puntosTotal || 0}</div>
+        <div class="profile-pts-label">puntos totales</div>
+      </div>
+    </div>
+    <div class="profile-stats-grid">
+      <div class="stat-card"><div class="num">${currentUserData.exactos||0}</div><div class="lbl">Exactos ⭐</div></div>
+      <div class="stat-card"><div class="num">${currentUserData.ganadores||0}</div><div class="lbl">Ganador ✓</div></div>
+      <div class="stat-card"><div class="num">${currentUserData.fallados||0}</div><div class="lbl">Fallados ✗</div></div>
+    </div>
+    <div class="edit-section">
+      <div class="edit-section-title">Cambiar nombre</div>
+      <div class="form-group">
+        <input type="text" id="edit-username" value="${currentUserData.username}" placeholder="Nombre de usuario">
+      </div>
+      <button class="btn-secondary" onclick="saveUsername()">Guardar</button>
+    </div>
+    <div class="edit-section">
+      <div class="edit-section-title">Cambiar club</div>
+      <div class="form-group">
+        <div class="club-select-wrapper">
+          <select id="edit-club">${CLUBES.sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c=>`<option value="${c.id}" ${c.id===currentUserData.club?'selected':''}>${c.nombre}</option>`).join('')}</select>
+        </div>
+      </div>
+      <button class="btn-secondary" onclick="saveClub()">Guardar</button>
+    </div>
+    <div style="margin-top:20px">
+      <button class="btn-danger" onclick="doLogout()">Cerrar sesión</button>
+    </div>
+  `;
+}
+
+window.uploadAvatar = async function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  showToast('Subiendo foto...');
+  try {
+    const storRef = ref(storage, `avatars/${currentUser.uid}`);
+    await uploadBytes(storRef, file);
+    const url = await getDownloadURL(storRef);
+    await updateDoc(doc(db, 'usuarios', currentUser.uid), { photoURL: url });
+    currentUserData.photoURL = url;
+    renderPerfil();
+    // Actualizar nav avatar
+    document.getElementById('nav-avatar-initial').innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    showToast('Foto actualizada');
+  } catch(e) {
+    showToast('Error al subir foto', 'error');
+  }
+};
+
+window.saveUsername = async function() {
+  const val = document.getElementById('edit-username').value.trim();
+  if (!val) return showToast('Nombre vacío', 'error');
+  await updateDoc(doc(db, 'usuarios', currentUser.uid), { username: val });
+  currentUserData.username = val;
+  document.getElementById('nav-avatar-initial').textContent = val[0].toUpperCase();
+  showToast('Nombre actualizado');
+  renderPerfil();
+};
+
+window.saveClub = async function() {
+  const val = document.getElementById('edit-club').value;
+  const oldClub = currentUserData.club;
+  if (val === oldClub) return;
+  await updateDoc(doc(db, 'usuarios', currentUser.uid), { club: val });
+  // Quitar del torneo viejo y agregar al nuevo
+  await updateDoc(doc(db, 'torneos', `club_${oldClub}`), { miembros: arrayRemove(currentUser.uid) }).catch(()=>{});
+  const nuevoTorneoRef = doc(db, 'torneos', `club_${val}`);
+  const ntSnap = await getDoc(nuevoTorneoRef);
+  const clubData = getClub(val);
+  if (!ntSnap.exists()) {
+    await setDoc(nuevoTorneoRef, { nombre: `Hinchas de ${clubData.nombre}`, tipo: 'club', clubId: val, miembros: [currentUser.uid], createdAt: serverTimestamp() });
+  } else {
+    await updateDoc(nuevoTorneoRef, { miembros: arrayUnion(currentUser.uid) });
+  }
+  currentUserData.club = val;
+  showToast('Club actualizado');
+  renderPerfil();
+};
+
+window.doLogout = async function() {
+  await signOut(auth);
+};
+
+// ─── ADMIN ────────────────────────────────────────────────────────────────────
+
+async function renderAdmin() {
+  const el = document.getElementById('admin-content');
+
+  // Cargar resultados existentes
+  let resultados = {};
+  const resSnap = await getDoc(doc(db, 'resultados', `fecha${FECHA_ACTUAL.numero}`));
+  if (resSnap.exists()) resultados = resSnap.data().partidos || {};
+
+  let html = `
+    <div class="admin-banner">⚙️ Panel de administración — solo vos podés ver esto</div>
+    <div class="section-title" style="font-size:20px;margin-bottom:16px">Cargar Resultados — Fecha ${FECHA_ACTUAL.numero}</div>
+  `;
+
+  FECHA_ACTUAL.partidos.filter(p => !p.bloqueado).forEach(p => {
+    const local = getClub(p.local);
+    const visitante = getClub(p.visitante);
+    const res = resultados[p.id] || {};
+    html += `<div class="resultado-input-row">
+      <div class="resultado-equipos">
+        <div>${local.nombre}</div>
+        <div style="color:var(--text2);font-size:11px">vs ${visitante.nombre}</div>
+      </div>
+      <div class="resultado-scores">
+        <input type="number" class="resultado-score-in" id="res_${p.id}_local" min="0" max="99" value="${res.local ?? ''}" placeholder="0">
+        <span style="color:var(--text2);font-weight:800">-</span>
+        <input type="number" class="resultado-score-in" id="res_${p.id}_visit" min="0" max="99" value="${res.visitante ?? ''}" placeholder="0">
+      </div>
+    </div>`;
+  });
+
+  html += `
+    <button class="btn-primary" onclick="guardarResultados()" style="margin-top:8px">Guardar y Calcular Puntos</button>
+    <div id="admin-status" class="save-status"></div>
+    <div style="height:20px"></div>
+    <div class="section-title" style="font-size:20px;margin-bottom:16px">Agregar nueva fecha</div>
+    <div class="edit-section">
+      <p style="color:var(--text2);font-size:14px">Para agregar una nueva fecha, editá la constante <code style="color:var(--accent)">FECHA_ACTUAL</code> en el código fuente del archivo HTML.</p>
+    </div>
+  `;
+
+  el.innerHTML = html;
+}
+
+window.guardarResultados = async function() {
+  const partidos = {};
+  for (const p of FECHA_ACTUAL.partidos.filter(p => !p.bloqueado)) {
+    const l = document.getElementById(`res_${p.id}_local`)?.value;
+    const v = document.getElementById(`res_${p.id}_visit`)?.value;
+    if (l !== '' && v !== '') {
+      partidos[p.id] = { local: parseInt(l), visitante: parseInt(v) };
+    }
+  }
+
+  await setDoc(doc(db, 'resultados', `fecha${FECHA_ACTUAL.numero}`), {
+    fecha: FECHA_ACTUAL.numero,
+    partidos,
+    updatedAt: serverTimestamp()
+  });
+
+  // Calcular puntos para cada usuario
+  const proQ = query(collection(db, 'pronosticos'), where('fecha', '==', FECHA_ACTUAL.numero));
+  const proSnap = await getDocs(proQ);
+  let calculados = 0;
+
+  for (const proDoc of proSnap.docs) {
+    const pro = proDoc.data();
+    let pts = 0, exactos = 0, ganadores = 0, fallados = 0;
+    for (const [pid, pv] of Object.entries(pro.partidos || {})) {
+      const res = partidos[pid];
+      if (!res) continue;
+      const calc = calcPuntos(pv, res);
+      if (!calc) continue;
+      pts += calc.pts;
+      if (calc.tipo === 'exacto') exactos++;
+      else if (calc.tipo === 'ganador') ganadores++;
+      else fallados++;
+    }
+    // Actualizar usuario
+    const uRef = doc(db, 'usuarios', pro.uid);
+    const uSnap = await getDoc(uRef);
+    if (uSnap.exists()) {
+      const ud = uSnap.data();
+      await updateDoc(uRef, {
+        puntosTotal: (ud.puntosTotal || 0) + pts,
+        exactos: (ud.exactos || 0) + exactos,
+        ganadores: (ud.ganadores || 0) + ganadores,
+        fallados: (ud.fallados || 0) + fallados,
+      });
+    }
+    // Marcar pronóstico como calculado
+    await updateDoc(doc(db, 'pronosticos', proDoc.id), { calculado: true, puntosObtenidos: pts });
+    calculados++;
+  }
+
+  // Refrescar datos propios
+  const mySnap = await getDoc(doc(db, 'usuarios', currentUser.uid));
+  if (mySnap.exists()) currentUserData = mySnap.data();
+
+  const status = document.getElementById('admin-status');
+  status.textContent = `✓ Resultados guardados. ${calculados} pronósticos calculados.`;
+  status.style.display = 'block';
+  showToast('Resultados guardados y puntos calculados');
+};
+
+
+window.completarPerfil = async function() {
+  const username = document.getElementById('completar-username').value.trim();
+  const club = document.getElementById('completar-club').value;
+  const errEl = document.getElementById('completar-error');
+  errEl.style.display = 'none';
+  if (!username || !club) { errEl.textContent = 'Completá todos los campos'; errEl.style.display = 'block'; return; }
+  try {
+    await updateProfile(currentUser, { displayName: username });
+    await setDoc(doc(db, 'usuarios', currentUser.uid), {
+      username, email: currentUser.email, club, photoURL: '', puntosTotal: 0,
+      exactos: 0, ganadores: 0, fallados: 0, createdAt: serverTimestamp()
+    });
+    // Torneo de club
+    const clubData = getClub(club);
+    const torneoClubRef = doc(db, 'torneos', `club_${club}`);
+    const torneoClubSnap = await getDoc(torneoClubRef);
+    if (!torneoClubSnap.exists()) {
+      await setDoc(torneoClubRef, { nombre: `Hinchas de ${clubData.nombre}`, tipo: 'club', clubId: club, miembros: [currentUser.uid], createdAt: serverTimestamp() });
+    } else {
+      await updateDoc(torneoClubRef, { miembros: arrayUnion(currentUser.uid) });
+    }
+    currentUserData = { username, email: currentUser.email, club, photoURL: '', puntosTotal: 0, exactos: 0, ganadores: 0, fallados: 0 };
+    closeModal('modal-completar-perfil');
+    const initial = username[0].toUpperCase();
+    document.getElementById('nav-avatar-initial').textContent = initial;
+    if (currentUser.email === ADMIN_EMAIL) document.getElementById('nav-admin').style.display = 'flex';
+    goToScreen('prode');
+  } catch(e) {
+    errEl.textContent = 'Error al guardar: ' + e.message; errEl.style.display = 'block';
+  }
+};
+
+</script>
+</body>
+</html>
